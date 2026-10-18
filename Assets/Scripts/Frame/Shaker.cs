@@ -35,4 +35,19 @@ public class Shaker : MonoBehaviour
             transform.GetChild(i).localPosition = poses[i] + Random.insideUnitCircle * intensity;
         }
     }
+
+    public void StopShake()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            bool contains = exclude_from_shaking.Contains(transform.GetChild(i).gameObject);
+            if (exclusive && contains || !exclusive && !contains)
+            {
+                continue;
+            }
+            transform.GetChild(i).localPosition = poses[i];
+        }
+
+        enabled = false;
+    }
 }

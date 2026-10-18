@@ -8,6 +8,7 @@ public class FloatRange : Pair<float, float>
     public float min { get { return first; } set { first = value; } }
     public float max { get { return second; } set { second = value; } }
     
+    public FloatRange(float a) : base(a, a) { }
     public FloatRange(float a, float b) : base(a, b) { }
     public FloatRange() : base(0f, 0f) { }
     public FloatRange(float[] range) : base(range[0], range[1]) { }

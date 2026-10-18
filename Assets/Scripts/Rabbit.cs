@@ -1,7 +1,6 @@
-using IEnumRunner.Transitions;
 using UnityEngine;
 
-public class sugar : MonoBehaviour
+public class Rabbit : Actor
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -12,6 +11,6 @@ public class sugar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += Vector3.left * Time.deltaTime;
+        
     }
 }

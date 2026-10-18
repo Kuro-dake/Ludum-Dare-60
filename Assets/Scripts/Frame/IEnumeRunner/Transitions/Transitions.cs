@@ -76,6 +76,7 @@ namespace IEnumRunner.Transitions
             public void SetContainer(Container container) => this.container = container;
             Container container;
             List<BaseAction> actions = new List<BaseAction>();
+            public int length => actions.Count;
             public BaseAction last_action => actions.FindLast((a) => true);
             public _Batch() { }
             public _Batch(Container container) => this.container = container;

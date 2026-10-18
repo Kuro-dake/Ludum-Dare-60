@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ShakeScreen : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class ShakeScreen : MonoBehaviour
     [SerializeField]
     List<Pair<string, ShakeScreenData>> variants = new List<Pair<string, ShakeScreenData>>();
     
-    public void Shake(string variant, float delay = 0f)
+    public IEnumerator Shake(string variant, float delay = 0f)
     {
         Debug.Log("shake");
         if(shake_routine != null)
@@ -16,7 +18,12 @@ public class ShakeScreen : MonoBehaviour
             StopCoroutine(shake_routine);
         }
 
-        shake_routine = StartCoroutine(ShakeStep(variants.Find(v=>v.first == variant).second, delay));
+        return ShakeStep(variants.Find(v=>v.first == variant).second, delay);
+    }
+
+    private void Start()
+    {
+        Initialize();
     }
 
     public void Initialize()

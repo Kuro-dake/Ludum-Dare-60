@@ -14,9 +14,9 @@ public class WaddleManager : Service
         OnWaddleStep = null;
         OnWaddleFinished = null;
     }
-    public void Waddle(bool move_camera)
+    public void Waddle(bool move_camera, bool bounce_only)
     {
-        StartCoroutine(TChangeStep(move_camera));
+        StartCoroutine(TChangeStep(move_camera, bounce_only));
     }
 
 
@@ -25,7 +25,7 @@ public class WaddleManager : Service
     public float bounce_speed => _bounce_speed;
     bool waddle_left;
     int last_change;
-    IEnumerator TChangeStep(bool move_camera)
+    IEnumerator TChangeStep(bool move_camera, bool bounce_only)
     {
         if (last_change-- <= 0)
         {
@@ -35,7 +35,7 @@ public class WaddleManager : Service
         {
             waddle_left = !waddle_left;
         }
-        OnWaddleStepArgs args = new OnWaddleStepArgs(move_camera, waddle_left);
+        OnWaddleStepArgs args = new OnWaddleStepArgs(move_camera, waddle_left, bounce_only);
         OnWaddleStart?.Invoke(this, args);
         float t = 0f;
         while (t < 1f)
@@ -65,12 +65,14 @@ public class WaddleManager : Service
         public float sin_t { get; protected set; }
         public float sin_t_half { get; protected set; }
         public bool move_camera { get; protected set; }
-        public OnWaddleStepArgs(bool move_camera, bool left)
+        public OnWaddleStepArgs(bool move_camera, bool left, bool bounce_only)
         {
             this.move_camera = move_camera;
             this.left = left;
+            this.bounce_only = bounce_only;
         }
         public bool left { get; protected set; }
+        public bool bounce_only { get; protected set; }
     }
 
 }

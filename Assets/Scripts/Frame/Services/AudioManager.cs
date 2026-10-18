@@ -65,7 +65,7 @@ public class AudioManager : Service
 
 
     List<Pair<string, List<int>>> random_resource_queue = new List<Pair<string, List<int>>>();
-    public AudioSource PlayRandomResource(string resource_name, IntRange numbers = null, float volume = .3f, FloatRange pitch = null, string format = "{0}{1}")
+    public AudioSource PlayRandomResource(string resource_name, IntRange numbers = null, float volume = 1f, FloatRange pitch = null, string format = "{0}{1}")
     {
 
         Pair<string, List<int>> res_q = random_resource_queue.Find(delegate (Pair<string, List<int>> rq) { return rq.first == resource_name; });
