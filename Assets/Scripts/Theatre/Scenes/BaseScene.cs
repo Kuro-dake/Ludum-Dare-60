@@ -64,7 +64,9 @@ public class BaseScene: MonoBehaviour
     {
       var parent = GameObject.Find(name).transform;
       return parent.Find("bubblePos");  
-    } 
+    }
+
+    protected ScriptLine break_line = null;
     
     public IEnumerable<ScriptLine> lines
     {
@@ -74,8 +76,14 @@ public class BaseScene: MonoBehaviour
             {
                 throw new Exception("A scene has to be initialized by a director");
             }
+            
             foreach (var line in GetScriptLines())
             {
+                if (break_line != null)
+                {
+                    yield return break_line;
+                    yield break;
+                }
                 yield return line;
             }
         }
@@ -135,6 +143,8 @@ public class BaseScene: MonoBehaviour
         
     };
 
+    protected virtual Dictionary<string, Vector3> scales => new()
+        { };
 
     public void SetupScene()
     {
@@ -145,6 +155,10 @@ public class BaseScene: MonoBehaviour
         foreach (var v in positions)
         {
             Find(v.Key).localPosition = v.Value;
+        }       
+        foreach (var v in scales)
+        {
+            Find(v.Key).localScale = v.Value;
         }
     }
 

@@ -56,7 +56,7 @@ public class S3Assault : BaseScene
         ["OutsideCave"] = new Vector3(4.41f,1.03f,0f),
         ["OutsideGrass"] = new Vector3(-4.29f,0.22f,0f),
         ["Door"] = new Vector3(4.83f,0.87f,0f),
-            ["Fans"] = new Vector3(-6.64f,-.57f)
+        ["Fans"] = new Vector3(-6.64f,-.57f)
 
     };
 }

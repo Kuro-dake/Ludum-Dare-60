@@ -143,7 +143,8 @@ public class SpeechBubble : MonoBehaviour
         else
         {
             // blocker, press space to continue
-            while (!Input.GetKey(KeyCode.Space))
+            PressSpace.waiting_for_space = true;
+            while (PressSpace.waiting_for_space)
             {
                 yield return null;
             }

@@ -16,9 +16,14 @@ public class NamedFloat : Pair<string, float>
 public class Director : MonoBehaviour
 {
     public static float rabbit_in_out_duration => named_params["rabbit_in_out_duration"];
-    [SerializeField]
-    private ScriptLine.LineActor current_vision = ScriptLine.LineActor.sugarboy;
-    
+    [SerializeField] private ScriptLine.LineActor current_vision;
+
+    public static ScriptLine.LineActor vision
+    {
+        get { return inst.current_vision; }
+        set { inst.current_vision = value; }
+    }
+
     [System.Serializable]
     public class NParam
     {
@@ -42,6 +47,21 @@ public class Director : MonoBehaviour
             return inst._named_params;            
         }
         
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (SC.sounds.already_playing_music)
+            {
+                SC.sounds.StopMusic(0.1f);
+            }
+            else
+            {
+                SC.sounds.PlayMusic("music", .3f);
+            }
+        }
     }
 
     static Director inst;
@@ -78,6 +98,7 @@ public class Director : MonoBehaviour
     {
         SC.Initialize();
         start_scene.SetupScene();
+        SC.sounds.PlayMusic("music", .3f);
         StartCoroutine(Direct(start_scene));
         StartCoroutine(WaddleTest());
         
@@ -128,9 +149,4 @@ public class Director : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

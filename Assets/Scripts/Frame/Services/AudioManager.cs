@@ -90,7 +90,7 @@ public class AudioManager : Service
         return PlayResource(resource_name, volume, pitch);
     }
 
-    public AudioSource PlayResource(string resource_name, float volume = .3f, FloatRange pitch = null)
+    public AudioSource PlayResource(string resource_name, float volume = 1f, FloatRange pitch = null)
     {
         AudioClip ac = Resources.Load<AudioClip>("Audio/" + resource_name);
         return PlayTrack(ac, volume, pitch);

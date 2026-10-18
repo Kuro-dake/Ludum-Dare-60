@@ -8,21 +8,21 @@ public class S1Cultists : BaseScene
     
     protected override List<ScriptLine> GetScriptLines()    
     {
-
+        SetupScene();
         return new()
         {
-            
+            SCRLA(()=>Make.The(Find("controls")).ThenWait(5f).then.In(3f).AlphaTo(0f).Happen()),
             ("rabbit!", SBC("Narrator")),
             
             // ding dong?
             
             Make.The(FindSR("Door")).In(.5f).AlphaTo(1f),
-            "raaaabbit...",
+            ("raaaabbit...", SBC("Narrator")),
             Make.The(FindSR("OutsideCave")).In(.5f).AlphaTo(1f),
             
             // ding dong?
             
-            "Hey rabbit!",
+            ("hey rabbit!", SBC("Narrator")),
             
             new Speech("oh my God...", SBC("Door"), -1f, 1f, .6f),
             Make.The(Find("Rabbit")).instantly.MoveBy(Vector2.right),
@@ -47,8 +47,8 @@ public class S1Cultists : BaseScene
             ("The future is here!", SBC("Fan1")),
             ("We have arrived at the future!", SBC("Fan3")),
             ("Good for you️.", SBC("Rabbit")),
-            ("Now|||.|||.|||.|||. |||||||||||| I'm going back inside.", SBC("Rabbit")),
-            new Speech("Byyyeeeee.", null, .5f, 0.3f),
+            ("Now|||.|||.||.|||. |||||||||||| I'm going back inside.", SBC("Rabbit")),
+            new Speech("Byyyeeeee.", SBC("Rabbit"), .5f, 0.3f),
             
             /// rabbit turns around and goes inside
             0.3f,
@@ -83,6 +83,13 @@ public class S1Cultists : BaseScene
         ["Rabbit"] = new Vector3(4.7f,-.13f,0f),
         ["OutsideCave"] = new Vector3(4.41f,1.03f,0f),
         ["OutsideGrass"] = new Vector3(-4.29f,0.22f,0f),
-        ["Door"] = new Vector3(4.83f,0.87f,0f)
+        ["Door"] = new Vector3(4.83f,0.87f,0f),
+        ["ShitPile"] = new Vector3(0.72f,1.88f),
+        ["Fans"] = new Vector3(-4.21f,.91f)
+    };
+    protected override Dictionary<string, Vector3> scales => new()
+    {
+        ["ShitPile"] = Vector3.one * .96465f,
+        ["subShitPile"] = new Vector3(1.422022f, 0.85151f, 0.85151f)
     };
 }

@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using IEnumRunner;
 using IEnumRunner.Transitions;
+using Unity.VisualScripting;
 using UnityEngine;
+using Sequence = IEnumRunner.Sequence;
 using Vector2 = UnityEngine.Vector2;
 
 public class PlayerChip : MonoBehaviour
@@ -86,6 +87,39 @@ public class PlayerChip : MonoBehaviour
             throw new Exception("Srsly wtf zero? Who sends zero?");
         }
       
+        
+    }
+
+    void Hit()
+    {
+        
+    }
+
+    void Collected()
+    {
+        
+    }
+    
+    void OnTriggerStay2D(Collider2D other)
+    {
+        GameEvent gevent = other.GetComponentInParent<GameEvent>();
+        if (gevent == null || !gevent.alive)
+        {
+            return;
+        }
+        
+        gevent.Collided();
+        if (gevent.game_event.type == Game.EventType.avoid)
+        {
+            Hit();
+            Game.inst.on_hit?.Invoke();
+        }
+        else
+        {
+            Collected();
+            Game.inst.on_collect?.Invoke();
+        }
+        
         
     }
 }

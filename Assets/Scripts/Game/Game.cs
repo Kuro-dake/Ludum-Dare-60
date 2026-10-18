@@ -9,6 +9,17 @@ public class Game : MonoBehaviour
 {
 
     [SerializeField] private Vector3 offscreen, onscreen;
+    [SerializeField]
+    private GameEvent game_event_prefab;
+
+    public static GameEvent GameEventFactory()
+    {
+        return Instantiate(inst.game_event_prefab);
+        
+    }
+
+    private static Game _game;
+    public static Game inst => _game == null ? _game = FindFirstObjectByType<Game>() : _game; 
     
     private Transform _player_chip_transform;
     Transform player_chip_transform => _player_chip_transform == null ? _player_chip_transform = BaseScene.Find("PlayerChip") :_player_chip_transform;
@@ -31,7 +42,7 @@ public class Game : MonoBehaviour
         
     }
     
-    public class GameEvent
+    public class GameEventData
     {
         
         public Vector2Int origin { get; protected set; }
@@ -39,14 +50,21 @@ public class Game : MonoBehaviour
 
         public EventType type { get; protected set; }
         public float modifier { get; protected set; }
+
+        public float windup, duration;
         
-        public GameEvent(string data)
+        public GameEventData(string data)
         {
 
             if (data[0] == 'w')
             {
                 modifier = float.Parse(data.Substring(1, 1)) / 10f;
                 type = EventType.wait;
+                return;
+            }
+            if (data[0] == 's')
+            {
+                type = EventType.spacebar;
                 return;
             }
             
@@ -68,22 +86,22 @@ public class Game : MonoBehaviour
             switch (data[0])
             {
                 case 'u':
-                    origin = new Vector2Int(column, 1);
+                    origin = new Vector2Int(column, 2);
                     direction = Vector2Int.down;
                     
                     break;
                 case 'd':
-                    origin = new Vector2Int(column, 1);
+                    origin = new Vector2Int(column, -2);
                     direction = Vector2Int.up;
 
                     break;
                 case 'l':
-                    origin = new Vector2Int(column, 1);
+                    origin = new Vector2Int(-2, column);
                     direction = Vector2Int.right;
 
                     break;
                 case 'r':
-                    origin = new Vector2Int(column, 1);
+                    origin = new Vector2Int(2, column);
                     direction = Vector2Int.left;
 
                     break;
@@ -91,7 +109,7 @@ public class Game : MonoBehaviour
                 case '1':
                 case '2':
                 case '3':
-                    origin = new Vector2Int(int.Parse(data.Substring(0,1)), column);
+                    origin = new Vector2Int(int.Parse(data.Substring(0,1)) - 2, column);
                     direction = Vector2Int.zero;
                     break;
                 
@@ -109,9 +127,6 @@ public class Game : MonoBehaviour
                 case 'a':
                     type = EventType.avoid;
                     break;
-                case 's':
-                    type = EventType.spacebar;
-                    break;
                 default:
                     throw new Exception($"Unknown event type {data[2]}");
 
@@ -119,23 +134,33 @@ public class Game : MonoBehaviour
             
         }
     }
-    
-    public IEnumerator StartGame(List<string> events)
+
+    public Action on_collect { get; protected set; } 
+    public Action on_hit { get; protected set; }
+    public Action on_loose { get; protected set; }
+    public IEnumerator StartGame(List<string> events, float windup, float duration, Action on_collect, Action on_hit, Action on_loose)
     {
-        
+        this.on_collect = on_collect;
+        this.on_hit = on_hit;
+        this.on_loose = on_loose;
+        running = true;
         yield return (
             Make.The(gameObject).In(.5f).MoveTo(onscreen + transform.parent.position)
             +
             Make.The(player_chip_transform).In(.5f).MoveTo(onscreen + transform.parent.position)
             ).Execute();
 
+        
         foreach (var es in events)
         {
-            GameEvent e = new(es);
+            GameEventData e = new(es);
+            e.windup = windup;
+            e.duration = duration;
             switch (e.type)
             {
                 case EventType.spacebar:
-                    while (!Input.GetKey(KeyCode.Space))
+                    PressSpace.waiting_for_space = true;
+                    while (PressSpace.waiting_for_space)
                     {
                         yield return null;
                     }
@@ -147,12 +172,14 @@ public class Game : MonoBehaviour
                 
                 case EventType.avoid:
                 case EventType.collect:
-                    
+                    StartCoroutine(GameEventFactory().LifeCycle(e));
                     break;
             }
         }
-        
-        running = true;
+
+        running = false;
+
+        yield return StopGame();
     }
     
     public IEnumerator StopGame()
@@ -165,13 +192,13 @@ public class Game : MonoBehaviour
         
     }
 
-    public IEnumerator WaitUntilGameFinished()
-    {
-        while (running)
-        {
-            yield return null;
-        }
-    }
+    // public IEnumerator WaitUntilGameFinished()
+    // {
+    //     while (running)
+    //     {
+    //         yield return null;
+    //     }
+    // }
 
     private Vector2Int _pos;
     public Vector2Int pos
@@ -252,4 +279,6 @@ public class Game : MonoBehaviour
         
         DigestNextDir();
     }
+
+     
 }
